@@ -16,11 +16,12 @@ import java.time.LocalDate;
 
 public interface SaleRepository extends JpaRepository<Sale, Long> {
 
-    @Query(value = "SELECT obj FROM Seller obj" +
-            " JOIN FETCH obj.sales" +
-            " WHERE UPPER(obj.name) LIKE UPPER(CONCAT('%', :name, '%'))",
+    @Query(value = "SELECT obj FROM Sale obj" +
+            " JOIN FETCH obj.seller" +
+            " WHERE obj.date BETWEEN :minDate AND :maxDate",
+            //UPPER(obj.name) LIKE UPPER(CONCAT('%', :name, '%'))
             countQuery = "SELECT COUNT(obj)" +
-                    " FROM Seller obj" +
-                    " JOIN obj.sales")
-    Page<Seller> searchByName(String name, Pageable pageable);
+                    " FROM Sale obj" +
+                    " JOIN obj.seller")
+    Page<Sale> searchByName(LocalDate minDate, LocalDate maxDate, Pageable pageable);
 }

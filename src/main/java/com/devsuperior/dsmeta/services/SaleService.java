@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import com.devsuperior.dsmeta.dto.SellerNameDTO;
 import com.devsuperior.dsmeta.entities.Seller;
+import com.devsuperior.dsmeta.repositories.SellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,8 @@ public class SaleService {
 
 	@Autowired
 	private SaleRepository repository;
+	@Autowired
+	private SellerRepository sellerRepository;
 	
 	public SaleMinDTO findById(Long id) {
 		Optional<Sale> result = repository.findById(id);
@@ -27,11 +30,16 @@ public class SaleService {
 		return new SaleMinDTO(entity);
 	}
 
-	public Page<SellerNameDTO> findByRequestParams(String minDate, String maxDate, String name, Pageable pageable){
+	public Page<SaleMinDTO> findByRequestParams(String minDate, String maxDate, String name, Pageable pageable){
 		DateTimeFormatter formatoEntrada = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		LocalDate dataMax = maxDate.isBlank() ? LocalDate.now() : LocalDate.parse(maxDate, formatoEntrada);
 		LocalDate dataMin = minDate.isBlank() ? dataMax.minusYears(1) : LocalDate.parse(minDate, formatoEntrada);
-		Page<Seller> result = repository.searchByName(name, pageable);
-		return result.map(x -> new SellerNameDTO(x));
+		Page<Sale> sales = repository.searchByName(dataMin, dataMax, pageable);
+		//Page<SaleMinDTO> saleMinDTOS = sales.map(x -> new SaleMinDTO(x));
+		for(Sale sale: sales){
+			Seller seller = sellerRepository.getReferenceById(sale.getSeller().getId());
+			sale.setSeller(seller);
+		}
+		return sales.map(x -> new SaleMinDTO(x));
 	}
 }
