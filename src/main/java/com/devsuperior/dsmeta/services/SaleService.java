@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-import com.devsuperior.dsmeta.dto.SallerNameDTO;
+import com.devsuperior.dsmeta.dto.SellerNameDTO;
 import com.devsuperior.dsmeta.entities.Seller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,11 +27,11 @@ public class SaleService {
 		return new SaleMinDTO(entity);
 	}
 
-	public Page<SallerNameDTO> findByRequestParams(String minDate, String maxDate, String name, Pageable pageable){
+	public Page<SellerNameDTO> findByRequestParams(String minDate, String maxDate, String name, Pageable pageable){
 		DateTimeFormatter formatoEntrada = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		LocalDate dataMax = maxDate.isBlank() ? LocalDate.now() : LocalDate.parse(maxDate, formatoEntrada);
 		LocalDate dataMin = minDate.isBlank() ? dataMax.minusYears(1) : LocalDate.parse(minDate, formatoEntrada);
 		Page<Seller> result = repository.searchByName(name, pageable);
-		return result.map(x -> new SallerNameDTO(x));
+		return result.map(x -> new SellerNameDTO(x));
 	}
 }
