@@ -1,10 +1,8 @@
 package com.devsuperior.dsmeta.services;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-import com.devsuperior.dsmeta.dto.SellerNameDTO;
 import com.devsuperior.dsmeta.entities.Seller;
 import com.devsuperior.dsmeta.repositories.SellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +29,9 @@ public class SaleService {
 	}
 
 	public Page<SaleMinDTO> findByRequestParams(String minDate, String maxDate, String name, Pageable pageable){
-		DateTimeFormatter formatoEntrada = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-		LocalDate dataMax = maxDate.isBlank() ? LocalDate.now() : LocalDate.parse(maxDate, formatoEntrada);
-		LocalDate dataMin = minDate.isBlank() ? dataMax.minusYears(1) : LocalDate.parse(minDate, formatoEntrada);
-		Page<Sale> sales = repository.searchByName(dataMin, dataMax, pageable);
-		//Page<SaleMinDTO> saleMinDTOS = sales.map(x -> new SaleMinDTO(x));
+		LocalDate dataMax = maxDate.isBlank() ? LocalDate.now() : LocalDate.parse(maxDate);
+		LocalDate dataMin = minDate.isBlank() ? dataMax.minusYears(1) : LocalDate.parse(minDate);
+		Page<Sale> sales = repository.searchByName(dataMin, dataMax, name, pageable);
 		for(Sale sale: sales){
 			Seller seller = sellerRepository.getReferenceById(sale.getSeller().getId());
 			sale.setSeller(seller);
