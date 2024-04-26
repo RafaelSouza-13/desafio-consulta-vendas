@@ -31,11 +31,6 @@ public class SaleService {
 	public Page<SaleMinDTO> findByRequestParams(String minDate, String maxDate, String name, Pageable pageable){
 		LocalDate dataMax = maxDate.isBlank() ? LocalDate.now() : LocalDate.parse(maxDate);
 		LocalDate dataMin = minDate.isBlank() ? dataMax.minusYears(1) : LocalDate.parse(minDate);
-		Page<Sale> sales = repository.searchByName(dataMin, dataMax, name, pageable);
-		for(Sale sale: sales){
-			Seller seller = sellerRepository.getReferenceById(sale.getSeller().getId());
-			sale.setSeller(seller);
-		}
-		return sales.map(x -> new SaleMinDTO(x));
+		return repository.searchByName(dataMin, dataMax, name, pageable);
 	}
 }
