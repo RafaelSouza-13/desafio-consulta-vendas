@@ -4,8 +4,6 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import com.devsuperior.dsmeta.dto.SaleReportDTO;
-import com.devsuperior.dsmeta.entities.Seller;
-import com.devsuperior.dsmeta.repositories.SellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,8 +18,6 @@ public class SaleService {
 
 	@Autowired
 	private SaleRepository repository;
-	@Autowired
-	private SellerRepository sellerRepository;
 	
 	public SaleMinDTO findById(Long id) {
 		Optional<Sale> result = repository.findById(id);

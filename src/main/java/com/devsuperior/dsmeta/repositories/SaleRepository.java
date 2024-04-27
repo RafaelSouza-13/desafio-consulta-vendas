@@ -27,7 +27,7 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
                     " WHERE UPPER(s.name) LIKE UPPER(CONCAT('%', :name, '%'))")
     Page<SaleMinDTO> searchByName(LocalDate minDate, LocalDate maxDate, String name, Pageable pageable);
 
-    @Query(value = "SELECT new com.devsuperior.dsmeta.dto.SaleReportDTO(seller.name)" +
+    @Query(value = "SELECT new com.devsuperior.dsmeta.dto.SaleReportDTO(seller.name, SUM(sale.amount))" +
             " FROM Sale sale" +
             " INNER JOIN Seller seller" +
             " ON sale.seller = seller.id" +
