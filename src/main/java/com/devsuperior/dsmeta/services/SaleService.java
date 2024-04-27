@@ -18,6 +18,8 @@ public class SaleService {
 
 	@Autowired
 	private SaleRepository repository;
+	LocalDate maxDate;
+	LocalDate minDate;
 	
 	public SaleMinDTO findById(Long id) {
 		Optional<Sale> result = repository.findById(id);
@@ -26,14 +28,17 @@ public class SaleService {
 	}
 
 	public Page<SaleMinDTO> findByRequestParams(String minDate, String maxDate, String name, Pageable pageable){
-		LocalDate dataMax = maxDate.isBlank() ? LocalDate.now() : LocalDate.parse(maxDate);
-		LocalDate dataMin = minDate.isBlank() ? dataMax.minusYears(1) : LocalDate.parse(minDate);
-		return repository.searchByName(dataMin, dataMax, name, pageable);
+		dateValidation(minDate, maxDate);
+		return repository.searchByName(this.minDate, this.maxDate, name, pageable);
 	}
 
     public Page<SaleReportDTO> report(String minDate, String maxDate, Pageable pageable) {
-		LocalDate dataMax = maxDate.isBlank() ? LocalDate.now() : LocalDate.parse(maxDate);
-		LocalDate dataMin = minDate.isBlank() ? dataMax.minusYears(1) : LocalDate.parse(minDate);
-		return  repository.searchSumarry(dataMin, dataMax, pageable);
+		dateValidation(minDate, maxDate);
+		return  repository.searchSumarry(this.minDate, this.maxDate, pageable);
     }
+
+	private void dateValidation(String minDate, String maxDate){
+		this.maxDate = maxDate.isBlank() ? LocalDate.now() : LocalDate.parse(maxDate);
+		this.minDate = minDate.isBlank() ? this.maxDate.minusYears(1) : LocalDate.parse(minDate);
+	}
 }
