@@ -3,6 +3,7 @@ package com.devsuperior.dsmeta.services;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import com.devsuperior.dsmeta.dto.SaleReportDTO;
 import com.devsuperior.dsmeta.entities.Seller;
 import com.devsuperior.dsmeta.repositories.SellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,4 +34,10 @@ public class SaleService {
 		LocalDate dataMin = minDate.isBlank() ? dataMax.minusYears(1) : LocalDate.parse(minDate);
 		return repository.searchByName(dataMin, dataMax, name, pageable);
 	}
+
+    public Page<SaleReportDTO> report(String minDate, String maxDate, Pageable pageable) {
+		LocalDate dataMax = maxDate.isBlank() ? LocalDate.now() : LocalDate.parse(maxDate);
+		LocalDate dataMin = minDate.isBlank() ? dataMax.minusYears(1) : LocalDate.parse(minDate);
+		return  repository.searchSumarry(dataMin, dataMax, pageable);
+    }
 }

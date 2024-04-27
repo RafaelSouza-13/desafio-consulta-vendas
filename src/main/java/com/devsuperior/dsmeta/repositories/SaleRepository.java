@@ -3,6 +3,7 @@ package com.devsuperior.dsmeta.repositories;
 
 
 import com.devsuperior.dsmeta.dto.SaleMinDTO;
+import com.devsuperior.dsmeta.dto.SaleReportDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,4 +26,16 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
                     " JOIN obj.seller s" +
                     " WHERE UPPER(s.name) LIKE UPPER(CONCAT('%', :name, '%'))")
     Page<SaleMinDTO> searchByName(LocalDate minDate, LocalDate maxDate, String name, Pageable pageable);
+
+    @Query(value = "SELECT new com.devsuperior.dsmeta.dto.SaleReportDTO(seller.name)" +
+            " FROM Sale sale" +
+            " INNER JOIN Seller seller" +
+            " ON sale.seller = seller.id" +
+            " WHERE sale.date BETWEEN :minDate AND :maxDate" +
+            " GROUP BY seller.name",
+            countQuery = "SELECT COUNT(sale)" +
+                    " FROM Sale sale" +
+                    " JOIN sale.seller seller" +
+                    " WHERE sale.date BETWEEN :minDate AND :maxDate")
+    Page<SaleReportDTO> searchSumarry(LocalDate minDate, LocalDate maxDate, Pageable pageable);
 }
